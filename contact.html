@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact — Brain Trust Collectives</title>
+<meta name="description" content="Get in touch with Brain Trust Collectives — Industrial Project Management, Legal, HR, Counselling and IT services.">
+<link rel="icon" href="assets/logo-placeholder.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Serif:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="index.html">
+      <img src="assets/logo-placeholder.svg" alt="Brain Trust Collectives logo">
+      Brain Trust Collectives
+    </a>
+    <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="mainNav">☰ Menu</button>
+    <nav class="main-nav" id="mainNav" aria-label="Primary">
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="services.html">Services</a></li>
+        <li><a href="team.html">Team</a></li>
+        <li><a href="contact.html" aria-current="page">Contact</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+  <section style="padding-bottom:0">
+    <div class="wrap">
+      <span class="eyebrow">Contact</span>
+      <h1>Tell us what you're building, or what's on your mind</h1>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap contact-grid">
+
+      <form id="contactForm" class="card reveal" novalidate>
+        <div class="form-field">
+          <label for="name">Name *</label>
+          <input type="text" id="name" name="name" required autocomplete="name">
+        </div>
+
+        <div class="form-field">
+          <label for="email">Email *</label>
+          <input type="email" id="email" name="email" required autocomplete="email">
+        </div>
+
+        <div class="form-field">
+          <label for="company">Company</label>
+          <input type="text" id="company" name="company" autocomplete="organization">
+        </div>
+
+        <div class="form-field">
+          <label for="vertical">Which vertical?</label>
+          <select id="vertical" name="vertical">
+            <option value="General enquiry">General enquiry</option>
+            <option value="Industrial Project Management">Industrial Project Management</option>
+            <option value="Legal Services">Legal Services</option>
+            <option value="Core HR / HR Facilitation">Core HR / HR Facilitation</option>
+            <option value="Counselling & Coaching">Counselling &amp; Coaching</option>
+            <option value="IT Services">IT Services</option>
+          </select>
+        </div>
+
+        <div class="form-field">
+          <label for="message">Message *</label>
+          <textarea id="message" name="message" rows="5" required></textarea>
+        </div>
+
+        <!-- Honeypot: real users never see or fill this. If filled, submission is silently dropped. -->
+        <div class="honeypot-field" aria-hidden="true">
+          <label for="website">Website</label>
+          <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+        </div>
+
+        <button type="submit" class="btn btn-primary" id="submitBtn">Send message</button>
+        <p class="form-status" id="formStatus" role="status" aria-live="polite"></p>
+      </form>
+
+      <aside class="card reveal">
+        <h3>Reach us directly</h3>
+        <dl class="contact-detail">
+          <dt>Email</dt>
+          <!-- PLACEHOLDER: real email address -->
+          <dd><a href="mailto:hello@braintrustcollectives.example">hello@braintrustcollectives.example</a></dd>
+
+          <dt>Phone</dt>
+          <!-- PLACEHOLDER: real phone number -->
+          <dd><a href="tel:+910000000000">+91 00000 00000</a></dd>
+
+          <dt>Office</dt>
+          <!-- PLACEHOLDER: real office address -->
+          <dd>[PLACEHOLDER ADDRESS — Bangalore, Karnataka, India]</dd>
+
+          <dt>LinkedIn</dt>
+          <!-- PLACEHOLDER: real LinkedIn company page URL -->
+          <dd><a href="https://www.linkedin.com/company/PLACEHOLDER" target="_blank" rel="noopener">Brain Trust Collectives on LinkedIn →</a></dd>
+        </dl>
+      </aside>
+
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div>
+      <strong>Brain Trust Collectives</strong><br>
+      <a href="team.html">Team</a> · <a href="services.html">Services</a> · <a href="index.html">Home</a>
+    </div>
+    <div>
+      hello@braintrustcollectives.example<br>
+      +91 00000 00000
+    </div>
+  </div>
+  <div class="wrap">
+    <p class="legal-line">&copy; 2026 Brain Trust Collectives LLP. All rights reserved.</p>
+  </div>
+</footer>
+
+<script src="js/main.js"></script>
+</body>
+</html>
