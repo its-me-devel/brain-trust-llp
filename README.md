@@ -66,10 +66,6 @@ Several placeholders are marked inline in the code (search for
 - **Legal entity name** — site currently says "Brain Trust Collectives"
   everywhere (matches the logo); confirm this matches the registered LLP
   name exactly for the footer legal line.
-- **Logo** — `assets/logo-placeholder.svg` is a stand-in. Replace with the
-  real `assets/logo.jpg` (or an SVG/PNG equivalent) and update the
-  `<img src>` references in all 4 HTML files plus `css/styles.css`/`hero.js`
-  if the format changes.
 - **Team bios** — `team.html` has placeholder cards for the Industrial
   Project Management, IT Services, and Legal Services vertical leads
   (30+ years profile each, per the original brief).
