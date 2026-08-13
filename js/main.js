@@ -50,7 +50,7 @@ const APPS_SCRIPT_URL = 'PLACEHOLDER_APPS_SCRIPT_EXEC_URL';
         form.reset();
       })
       .catch(function () {
-        status.textContent = 'Something went wrong — email us at hello@braintrustcollectives.example';
+        status.textContent = 'Something went wrong - email us at hello@braintrustcollectives.example';
         status.setAttribute('data-state', 'error');
       })
       .finally(function () {

@@ -1,4 +1,4 @@
-// 2.5D scroll hero — home page only. CSS transforms on a single flat plane.
+// 2.5D scroll hero - home page only. CSS transforms on a single flat plane.
 (function () {
   var hero = document.querySelector('.hero');
   var plane = document.getElementById('heroPlane');
