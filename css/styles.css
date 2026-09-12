@@ -105,6 +105,10 @@ section {
   padding: var(--space-5) 0;
 }
 
+.section-alt {
+  background: var(--panel);
+}
+
 /* Header / nav */
 .site-header {
   position: sticky;
