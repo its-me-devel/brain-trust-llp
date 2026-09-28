@@ -21,6 +21,14 @@ var NAME_DIGIT_RE = /[0-9]/;
 var MESSAGE_ALLOWED_RE = /^[A-Za-z0-9\s\-.[\]()]*$/;
 var NOTIFY_TO = 'braintrustllp@gmail.com'; // comma-separate to add more recipients
 
+// Web App response delivery back to the browser is unreliable on Apps
+// Script's infrastructure - a request can succeed server-side (row written)
+// while the client never sees the response and retries. This cache makes
+// that safe: a retry carrying the same submission_id is recognized and
+// short-circuited instead of writing a second row. 6 hours (the max TTL)
+// comfortably outlives any realistic retry window.
+var DEDUP_TTL_SECONDS = 21600;
+
 function doPost(e) {
   try {
     var params = (e && e.parameter) || {};
@@ -28,6 +36,12 @@ function doPost(e) {
     // Honeypot: bots fill every field, real users never see/fill this one.
     // Silently accept without writing a row, same as the client-side check.
     if (params.website) {
+      return jsonResponse({ result: 'ok' });
+    }
+
+    var submissionId = String(params.submission_id || '').trim();
+    var cache = submissionId ? CacheService.getScriptCache() : null;
+    if (cache && cache.get('sub_' + submissionId)) {
       return jsonResponse({ result: 'ok' });
     }
 
@@ -62,6 +76,12 @@ function doPost(e) {
       sheetSafe(vertical),
       sheetSafe(message)
     ]);
+
+    // Mark this submission processed only after the row is safely written,
+    // so a genuinely failed write is still eligible for a real retry.
+    if (cache) {
+      cache.put('sub_' + submissionId, 'true', DEDUP_TTL_SECONDS);
+    }
 
     // Notification email is best-effort - a failure here must never lose or
     // fail the submission, since the row above is already written.

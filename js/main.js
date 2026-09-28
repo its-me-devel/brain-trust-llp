@@ -31,6 +31,13 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbycJF-BaIU9KUTJ
   // MESSAGE_ALLOWED_RE in apps-script/Code.gs.
   var MESSAGE_ALLOWED_RE = /^[A-Za-z0-9\s\-.[\]()]*$/;
 
+  function generateSubmissionId() {
+    if (window.crypto && typeof window.crypto.randomUUID === 'function') {
+      return window.crypto.randomUUID();
+    }
+    return Date.now().toString(36) + '-' + Math.random().toString(36).slice(2);
+  }
+
   // Wires inline feedback (shown on blur, live once an error is already
   // showing) for a field, instead of relying solely on the browser's native
   // tooltip, which mobile browsers render inconsistently. By default
@@ -70,6 +77,36 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbycJF-BaIU9KUTJ
     return MESSAGE_ALLOWED_RE.test(v);
   });
 
+  function submitOnce(formData) {
+    return fetch(APPS_SCRIPT_URL, { method: 'POST', body: formData })
+      .then(function (res) {
+        if (!res.ok) throw new Error('Request failed: ' + res.status);
+        return res.json();
+      })
+      .then(function (data) {
+        // Apps Script Web Apps always respond 200, even on a logical
+        // failure - the real outcome is in the JSON body, not the status.
+        if (!data || data.result !== 'ok') throw new Error((data && data.message) || 'Request failed');
+        return data;
+      });
+  }
+
+  // Apps Script Web Apps are intermittently unreliable on their own - the
+  // same request can succeed quickly one moment and hang for 20-30s before
+  // failing the next, with no fault in this site's code. A couple of
+  // retries absorbs a transient failure before a real visitor ever sees an
+  // error. No client-side timeout/abort is used here deliberately: cutting
+  // a slow-but-eventually-successful request short and retrying could
+  // write the same submission to the Sheet twice.
+  function submitWithRetry(formData, attemptsLeft) {
+    return submitOnce(formData).catch(function (err) {
+      if (attemptsLeft <= 0) throw err;
+      status.textContent = 'Still trying - the connection can be slow sometimes…';
+      return new Promise(function (resolve) { setTimeout(resolve, 1000); })
+        .then(function () { return submitWithRetry(formData, attemptsLeft - 1); });
+    });
+  }
+
   form.addEventListener('submit', function (e) {
     e.preventDefault();
 
@@ -101,16 +138,14 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbycJF-BaIU9KUTJ
     status.removeAttribute('data-state');
 
     var formData = new FormData(form);
+    // One id per submit action, reused across every retry of it - lets
+    // Code.gs recognize a retry as the same submission (see submission_id
+    // handling there) instead of writing a duplicate row when a request
+    // actually succeeded server-side but its response never made it back.
+    formData.append('submission_id', generateSubmissionId());
 
-    fetch(APPS_SCRIPT_URL, { method: 'POST', body: formData })
-      .then(function (res) {
-        if (!res.ok) throw new Error('Request failed');
-        return res.json();
-      })
+    submitWithRetry(formData, 2)
       .then(function (data) {
-        // Apps Script Web Apps always respond 200, even on a logical
-        // failure - the real outcome is in the JSON body, not the status.
-        if (!data || data.result !== 'ok') throw new Error('Request failed');
         status.textContent = 'Thanks, a partner will be in touch.';
         status.setAttribute('data-state', 'success');
         form.reset();

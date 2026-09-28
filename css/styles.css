@@ -424,6 +424,16 @@ section {
   color: var(--maroon);
 }
 
+.info-note {
+  border-left: 3px solid var(--navy);
+  background: #e9f0f4;
+  padding: var(--space-2);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  color: var(--navy);
+}
+
 .placeholder-note {
   border: 1px dashed var(--line);
   color: var(--ink-soft);
