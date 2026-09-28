@@ -23,6 +23,7 @@
   --space-6: 6rem;
 
   --radius: 6px;
+  --radius-lg: 14px;
   --max-width: 1180px;
 }
 
@@ -116,6 +117,8 @@ section {
   z-index: 50;
   background: var(--panel);
   border-bottom: 1px solid var(--line);
+  border-top: 3px solid;
+  border-image: linear-gradient(90deg, var(--gold), var(--maroon)) 1;
 }
 
 .site-header .wrap {
@@ -160,9 +163,14 @@ section {
   font-size: 0.95rem;
 }
 
-.main-nav a:hover,
+.main-nav a:hover {
+  color: var(--maroon);
+}
+
 .main-nav a[aria-current="page"] {
   color: var(--maroon);
+  text-decoration: underline;
+  text-underline-offset: 4px;
 }
 
 .nav-toggle {
@@ -216,6 +224,13 @@ section {
 .btn:hover { transform: translateY(-2px); }
 .btn:active { transform: translateY(0); }
 
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: none;
+  transform: none;
+}
+
 .btn-primary:hover { background: #f0b756; color: var(--navy-deep); }
 
 .btn-outline {
@@ -227,7 +242,7 @@ section {
 
 /* Hero (index only) */
 .hero {
-  background: var(--navy-deep);
+  background: radial-gradient(120% 140% at 12% 15%, #17435d 0%, var(--navy-deep) 55%, #0d2636 100%);
   color: var(--paper);
   padding: var(--space-6) 0 var(--space-5);
   overflow: hidden;
@@ -276,8 +291,9 @@ section {
 .card {
   background: var(--panel);
   border: 1px solid var(--line);
-  border-radius: var(--radius);
+  border-radius: var(--radius-lg);
   padding: var(--space-3);
+  box-shadow: 0 1px 2px rgba(18, 51, 73, 0.04);
   display: flex;
   flex-direction: column;
   transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
@@ -285,7 +301,7 @@ section {
 
 .card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 14px 28px rgba(18, 51, 73, 0.1);
+  box-shadow: 0 16px 32px rgba(18, 51, 73, 0.1);
   border-color: var(--navy);
 }
 
@@ -303,6 +319,100 @@ section {
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: var(--space-3);
 }
+
+/* Five verticals: sized so all five sit on one row at desktop widths
+   instead of orphaning a lone fifth card onto its own line. */
+.card-grid--verticals {
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+/* Icon badge used on the "Why Brain Trust" cards */
+.card-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--space-2);
+  color: #fff;
+}
+
+.card-icon svg { width: 20px; height: 20px; }
+
+.card-icon--navy { background: var(--navy); }
+.card-icon--gold { background: var(--gold); color: var(--navy-deep); }
+.card-icon--maroon { background: var(--maroon); }
+
+/* Step rail: "How We Work" process flow */
+.step-rail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  position: relative;
+}
+
+.step-rail::before {
+  content: '';
+  position: absolute;
+  top: 20px;
+  bottom: 20px;
+  left: 20px;
+  width: 2px;
+  background: var(--line);
+  z-index: 0;
+}
+
+.step { position: relative; z-index: 1; }
+
+.step {
+  display: flex;
+  gap: var(--space-3);
+  align-items: flex-start;
+}
+
+.step-badge {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--navy-deep);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.step h3 { margin-bottom: 0.3rem; }
+.step p { margin-bottom: 0; color: var(--ink-soft); }
+
+@media (min-width: 769px) {
+  .step-rail {
+    flex-direction: row;
+    gap: var(--space-3);
+  }
+  .step-rail::before {
+    top: 20px;
+    bottom: auto;
+    left: calc(20px + var(--space-3));
+    right: calc(20px + var(--space-3));
+    width: auto;
+    height: 2px;
+  }
+  .step {
+    flex: 1;
+    flex-direction: column;
+  }
+  .step-badge { margin-bottom: var(--space-2); }
+}
+
+.step-rail .reveal:nth-child(2) { transition-delay: 0.08s; }
+.step-rail .reveal:nth-child(3) { transition-delay: 0.16s; }
+.step-rail .reveal:nth-child(4) { transition-delay: 0.24s; }
+.step-rail .reveal:nth-child(5) { transition-delay: 0.32s; }
 
 .scope-note {
   border-left: 3px solid var(--maroon);
@@ -382,6 +492,37 @@ section {
   border-radius: var(--radius);
   background: var(--panel);
   color: var(--ink);
+  transition: border-color 0.15s ease;
+}
+
+.form-field input:hover,
+.form-field select:hover,
+.form-field textarea:hover {
+  border-color: var(--navy);
+}
+
+.form-field.has-error input,
+.form-field.has-error select,
+.form-field.has-error textarea {
+  border-color: var(--maroon);
+}
+
+.field-error {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  color: var(--maroon);
+}
+
+.field-hint {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+}
+
+.form-field.has-error .field-hint {
+  display: none;
 }
 
 .honeypot-field {

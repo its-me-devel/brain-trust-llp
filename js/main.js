@@ -1,7 +1,7 @@
 // Shared site behaviour: mobile nav toggle, contact form submit, scroll reveal.
 
 // PLACEHOLDER: paste the deployed Google Apps Script /exec URL here once available.
-const APPS_SCRIPT_URL = 'PLACEHOLDER_APPS_SCRIPT_EXEC_URL';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbycJF-BaIU9KUTJywpkFx9D4XyiwAlpkuvAxecG3ClwzkHz6IxgzUOjwyNqxJFJv8IJ/exec';
 
 (function navToggle() {
   var toggle = document.getElementById('navToggle');
@@ -20,6 +20,55 @@ const APPS_SCRIPT_URL = 'PLACEHOLDER_APPS_SCRIPT_EXEC_URL';
 
   var submitBtn = document.getElementById('submitBtn');
   var status = document.getElementById('formStatus');
+  var nameInput = document.getElementById('name');
+  var nameError = document.getElementById('nameError');
+  var emailInput = document.getElementById('email');
+  var emailError = document.getElementById('emailError');
+  var messageInput = document.getElementById('message');
+  var messageError = document.getElementById('messageError');
+
+  // Only letters, numbers, spaces and - . [ ] ( ) - kept in sync with
+  // MESSAGE_ALLOWED_RE in apps-script/Code.gs.
+  var MESSAGE_ALLOWED_RE = /^[A-Za-z0-9\s\-.[\]()]*$/;
+
+  // Wires inline feedback (shown on blur, live once an error is already
+  // showing) for a field, instead of relying solely on the browser's native
+  // tooltip, which mobile browsers render inconsistently. By default
+  // validity comes from the input's own `pattern`/`required` attributes;
+  // pass `customValidator` for a field type=text validation can't express -
+  // <textarea> doesn't support the `pattern` attribute at all, so message's
+  // character-set check runs here and reports through setCustomValidity so
+  // it still participates in form.checkValidity(). Returns a check()
+  // function the submit handler can call to force the error into view.
+  function wireInlineValidation(input, errorEl, customValidator) {
+    if (!input || !errorEl) return null;
+
+    function check() {
+      var valid;
+      if (customValidator) {
+        valid = customValidator(input.value);
+        input.setCustomValidity(valid ? '' : errorEl.textContent);
+      } else {
+        valid = input.checkValidity();
+      }
+      var show = !valid && input.value !== '';
+      input.closest('.form-field').classList.toggle('has-error', show);
+      errorEl.hidden = !show;
+      return valid;
+    }
+
+    input.addEventListener('blur', check);
+    input.addEventListener('input', function () {
+      if (!errorEl.hidden) check();
+    });
+    return check;
+  }
+
+  var checkName = wireInlineValidation(nameInput, nameError);
+  var checkEmail = wireInlineValidation(emailInput, emailError);
+  var checkMessage = wireInlineValidation(messageInput, messageError, function (v) {
+    return MESSAGE_ALLOWED_RE.test(v);
+  });
 
   form.addEventListener('submit', function (e) {
     e.preventDefault();
@@ -29,6 +78,17 @@ const APPS_SCRIPT_URL = 'PLACEHOLDER_APPS_SCRIPT_EXEC_URL';
     if (honeypot && honeypot.value) {
       return;
     }
+
+    if (nameInput) nameInput.value = nameInput.value.trim();
+    if (emailInput) emailInput.value = emailInput.value.trim();
+
+    // Refresh custom-validity state (message) before asking the form
+    // whether it's valid overall - setCustomValidity only reflects the
+    // last time check() ran, which may predate this submit attempt if the
+    // field was never blurred.
+    if (checkName) checkName();
+    if (checkEmail) checkEmail();
+    if (checkMessage) checkMessage();
 
     if (!form.checkValidity()) {
       form.reportValidity();
@@ -45,6 +105,12 @@ const APPS_SCRIPT_URL = 'PLACEHOLDER_APPS_SCRIPT_EXEC_URL';
     fetch(APPS_SCRIPT_URL, { method: 'POST', body: formData })
       .then(function (res) {
         if (!res.ok) throw new Error('Request failed');
+        return res.json();
+      })
+      .then(function (data) {
+        // Apps Script Web Apps always respond 200, even on a logical
+        // failure - the real outcome is in the JSON body, not the status.
+        if (!data || data.result !== 'ok') throw new Error('Request failed');
         status.textContent = 'Thanks, a partner will be in touch.';
         status.setAttribute('data-state', 'success');
         form.reset();

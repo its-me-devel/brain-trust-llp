@@ -46,12 +46,20 @@
       <form id="contactForm" class="card reveal" novalidate>
         <div class="form-field">
           <label for="name">Name *</label>
-          <input type="text" id="name" name="name" required autocomplete="name">
+          <input type="text" id="name" name="name" required autocomplete="name"
+            pattern="[^0-9]*"
+            title="Name shouldn't contain numbers"
+            aria-describedby="nameError">
+          <p class="field-error" id="nameError" role="alert" hidden>Name shouldn't contain numbers</p>
         </div>
 
         <div class="form-field">
           <label for="email">Email *</label>
-          <input type="email" id="email" name="email" required autocomplete="email">
+          <input type="email" id="email" name="email" required autocomplete="email"
+            pattern="[^\s@]+@[^\s@]+\.[^\s@]+"
+            title="Enter a full email address, e.g. name@example.com"
+            aria-describedby="emailError">
+          <p class="field-error" id="emailError" role="alert" hidden>Enter a full email address, e.g. name@example.com</p>
         </div>
 
         <div class="form-field">
@@ -73,7 +81,9 @@
 
         <div class="form-field">
           <label for="message">Message *</label>
-          <textarea id="message" name="message" rows="5" required></textarea>
+          <textarea id="message" name="message" rows="5" required aria-describedby="messageHint messageError"></textarea>
+          <p class="field-hint" id="messageHint">Letters, numbers, spaces and - . [ ] ( ) only.</p>
+          <p class="field-error" id="messageError" role="alert" hidden>Only letters, numbers, spaces and - . [ ] ( ) are allowed.</p>
         </div>
 
         <!-- Honeypot: real users never see or fill this. If filled, submission is silently dropped. -->

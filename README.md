@@ -19,19 +19,18 @@ extension works the same way, or just open `index.html` directly.)
 ## Configure the contact form
 
 The form on `contact.html` posts to a Google Apps Script web app (static
-hosts can't receive form submissions directly). Open `js/main.js` and set:
+hosts can't receive form submissions directly). The ready-to-deploy script
+and full click-by-click deployment steps are in
+[`apps-script/README.md`](./apps-script/README.md) — it appends each
+submission as a row in a Google Sheet.
+
+Once deployed, open `js/main.js` and set:
 
 ```js
 const APPS_SCRIPT_URL = 'PLACEHOLDER_APPS_SCRIPT_EXEC_URL';
 ```
 
-to the deployed Apps Script `/exec` URL. To deploy the script:
-
-1. In the target Google Sheet, add header row: `timestamp | name | email | company | vertical | message`.
-2. Extensions → Apps Script, add a `doPost(e)` function that appends
-   `e.parameter` values as a new row and returns a JSON success response.
-3. Deploy → New deployment → Web app. Execute as **you**, access **Anyone**.
-4. Copy the `/exec` URL into `APPS_SCRIPT_URL` above.
+to the deployed Apps Script `/exec` URL.
 
 Until this is set, submitting the form will correctly show the "something
 went wrong" error state — that's expected with the placeholder URL.
@@ -87,6 +86,7 @@ css/styles.css       Shared styles, design tokens as CSS variables
 js/main.js           Nav toggle, form submit, scroll-reveal
 js/hero.js           2.5D scroll effect (home only)
 assets/              Logo (placeholder until real asset is supplied)
+apps-script/         Contact form backend (Google Apps Script + deploy steps)
 ```
 
 Header and footer markup is repeated identically across the 4 pages (no

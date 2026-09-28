@@ -5,3 +5,6 @@ Thumbs.db
 .vscode/
 .idea/
 node_modules/
+
+# Contains the deployed Apps Script exec URL/deployment id - not for git.
+apps-script/README-dontEdit.md
