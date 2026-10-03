@@ -68,8 +68,8 @@ Several placeholders are marked inline in the code (search for
 - **Team bios** — `team.html` has placeholder cards for the Industrial
   Project Management, IT Services, and Legal Services vertical leads
   (30+ years profile each, per the original brief).
-- **Contact details** — `contact.html` and the footer on every page use
-  placeholder email, phone, office address and LinkedIn URL.
+- **Contact details** — confirm the email, phone, and office address in
+  `contact.html` and the footer on every page are final before launch.
 - **Apps Script `/exec` URL** — see "Configure the contact form" above.
 - **Layered logo (optional, later)** — if a transparent/layered version of
   the logo becomes available, `js/hero.js` has a comment marking where to
