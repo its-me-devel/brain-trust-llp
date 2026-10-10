@@ -1,0 +1,12 @@
+{
+  // Tells Cloudflare's unified Workers/Pages deploy ("npx wrangler deploy")
+  // that this is a pure static site - no "main" field, so no Worker script
+  // runs at all; requests are served directly from the "assets" directory.
+  // Without this file, the platform's default Git-connected deploy command
+  // has nothing to deploy and fails.
+  "name": "brain-trust-collectives-llp",
+  "compatibility_date": "2026-10-10",
+  "assets": {
+    "directory": "./"
+  }
+}

@@ -1,0 +1,11 @@
+
+.git
+.gitignore
+wrangler.jsonc
+.assetsignore
+package.json
+README.md
+SECURITY_AUDIT.md
+todo.md
+apps-script/
+tests/
