@@ -118,16 +118,25 @@ checks outside version control (§H).
       confirm no `/exec` URL, API key, or PAT was ever committed and later
       removed — deleted-but-in-history secrets still leak.
 
-## Hosting / transport (GitHub Pages)
+## Hosting / transport
 
-- [ ] Confirm **Enforce HTTPS** is checked in GitHub Pages settings once a
-      custom domain is attached — GitHub Pages defaults to allowing HTTP
-      until this is explicitly turned on for custom domains.
-- [ ] Add a `Content-Security-Policy` via `<meta http-equiv>` in each page
-      (GitHub Pages can't set custom HTTP response headers) restricting
-      script/style/connect sources to `'self'`, `fonts.googleapis.com`,
-      `fonts.gstatic.com`, and the Apps Script `script.google.com` origin —
-      reduces damage if any third-party script is ever added carelessly.
+- [x] **Add a real `Content-Security-Policy` as an HTTP header** — done
+      (2026-10-10) via `_headers` at the repo root, plus
+      `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`, and a
+      restrictive `Permissions-Policy`. This only takes effect on
+      **Cloudflare Pages** — GitHub Pages can't set custom response
+      headers at all, which is exactly why the site is moving there for
+      the real custom domain (see `README.md`'s "Deploy to Cloudflare
+      Pages" section). Scoped to the site's actual resources: `'self'`,
+      `fonts.googleapis.com`/`fonts.gstatic.com`, and `script.google.com`
+      (the Apps Script origin, for the contact form's `fetch()`).
+- [ ] Confirm **Always Use HTTPS** is turned on in Cloudflare's SSL/TLS
+      settings once `braintrustcollectivesllp.com` is attached (step 7 of
+      the Cloudflare Pages deploy in `README.md`).
+- [ ] If GitHub Pages is kept running as a fallback alongside Cloudflare
+      Pages: confirm **Enforce HTTPS** is checked there too (Settings →
+      Pages) — GitHub Pages defaults to allowing HTTP until that's
+      explicitly turned on for a custom domain.
 - [ ] Add `rel="noopener noreferrer"` to any future `target="_blank"` links
       (the current LinkedIn link already has `rel="noopener"` — keep this
       pattern for new external links).

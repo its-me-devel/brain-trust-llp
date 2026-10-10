@@ -477,8 +477,8 @@ no JS libraries).
 | Honeypot operates correctly | PASS client-side; real enforcement is server-side (SEC-008 notwithstanding) |
 | DOM-based XSS | PASS — none found |
 | Third-party JS dependencies | PASS — none (Google Fonts is CSS only) |
-| CSP compatibility | N/V / recommendation only — no CSP currently set; GitHub Pages can't set response headers, a `<meta>` CSP is possible and already tracked in `todo.md` |
-| Security headers via hosting | N/A — GitHub Pages limitation, tracked in `todo.md` |
+| CSP compatibility | **Resolved 2026-10-10** — a real `Content-Security-Policy` HTTP header now ships via `_headers` at the repo root (scoped to `'self'`, Google Fonts, and `script.google.com`), effective once the site is on Cloudflare Pages per `README.md` |
+| Security headers via hosting | **Resolved 2026-10-10**, contingent on the Cloudflare Pages migration — `_headers` also sets `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`, `Permissions-Policy`; none of these take effect on GitHub Pages, which cannot serve custom response headers at all |
 | No credentials in client code | PASS — only the intentionally-public `/exec` URL |
 | Form submits only intended fields | PASS — plain `new FormData(form)` |
 | Loading/success/timeout/error states | PASS |
