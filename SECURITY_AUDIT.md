@@ -743,11 +743,18 @@ a "minimal fix."
 
 ## H. Production Readiness Decision
 
-# **READY FOR PRODUCTION** — contingent on redeploying `Code.gs`
+# **READY FOR PRODUCTION**
+
+**Update (2026-10-10): the site owner has redeployed `apps-script/Code.gs`
+to the live Apps Script project** (Deploy → Manage deployments → New
+version → Deploy). This is recorded as self-reported — nothing in this
+repository or this audit's tooling can independently query a live Apps
+Script deployment to confirm it, the same way the rest of §G/§F's
+Google-account items can't be.
 
 **This verdict covers the *code in this repository*, verified by 34
 passing local tests against a faithful mock of the Apps Script runtime.
-It does not cover the three items in §G/§F that are Google-account
+It does not cover the two remaining items below that are Google-account
 configuration, not code, and cannot be verified from here (§G items 6 and
 7; §F item 5) — those remain the user's responsibility to spot-check.**
 
@@ -763,16 +770,12 @@ free, serverless, anonymous-access Apps Script backend, not overlooked
 bugs — each is explained, bounded, and
 documented rather than silently accepted.
 
-**Blockers before this protects real traffic (not code defects — deployment steps):**
-1. **`Code.gs` must be redeployed.** Apps Script does not pull from git.
-   Re-paste the current `apps-script/Code.gs` into the Apps Script editor
-   and run **Deploy → Manage deployments → Edit → New version → Deploy**.
-   Until this happens, the live site is still running the *pre-audit* code
-   — none of SEC-001 through SEC-010 are protecting real traffic yet.
+**Remaining items (not code defects — deployment/account steps, both outside what this repo or this audit's tooling can verify):**
+1. ~~`Code.gs` must be redeployed~~ — **done**, per the owner (2026-10-10).
 2. **One manual, non-adversarial check of the redeployed live form**
-   (§G item 6) — submit it once for real after redeploying, to confirm the
-   browser ↔ Google network path behaves as the source code assumes. This
-   cannot be done from this environment.
+   (§G item 6) — submit it once for real, to confirm the browser ↔ Google
+   network path behaves as the source code assumes. Still recommended;
+   not something this audit's tooling can do from this environment.
 3. **One manual spot-check of Google-account settings** (§G item 7; §F
    item 5) — deployment "Execute as / Who has access," the Sheet's sharing
    settings, and the OAuth scope grant — against what

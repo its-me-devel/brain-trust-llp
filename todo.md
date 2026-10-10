@@ -58,11 +58,17 @@ checks outside version control (§H).
       field added later — both are field-by-field opt-in, not automatic, so
       a future field is unsafe by default until someone remembers to wire it
       in.
-- [ ] **Not yet live** — `Code.gs` in this repo has the fixes above, but
-      Apps Script doesn't deploy from git. Re-paste into the Apps Script
-      editor and **Deploy → Manage deployments → Edit → New version →
-      Deploy** (per `apps-script/README.md`) before any of this protects
-      the real site.
+- [x] **Redeployed (2026-10-10, per owner)** — `Code.gs` with the fixes
+      above has been pasted into the Apps Script editor and redeployed via
+      **Deploy → Manage deployments → Edit → New version → Deploy**. Noted
+      here as self-reported — not independently verified, since nothing in
+      this repo can query a live Apps Script deployment. Two things still
+      worth a one-time manual check (outside version control, see
+      `SECURITY_AUDIT.md` §H): the deployment's "Execute as / Who has
+      access" settings and the Sheet's sharing permissions, against what
+      `apps-script/README.md` documents. Also worth one ordinary (non-
+      adversarial) live submission of the real form to confirm the browser
+      ↔ Google network path behaves as the code assumes.
 - [ ] No monitoring on notification-email failures (SEC-007 in the audit) —
       if the account's daily `MailApp` quota is ever exhausted, enquiry
       emails silently stop with nothing visible except an Apps Script
