@@ -6,33 +6,73 @@ priority order within each group.
 
 ## Contact form backend (`apps-script/Code.gs`)
 
-- [ ] Validate `vertical` server-side against the fixed option list from
-      `contact.html` (`General enquiry`, `Industrial Project Management`,
-      `Legal Services`, `Core HR / HR Facilitation`, `Counselling & Coaching`,
-      `IT Services`). Currently only constrained client-side by the
-      `<select>` — the `/exec` URL is public and can be POSTed to directly,
-      bypassing the dropdown entirely.
-- [ ] Add a length cap to `company` (and `message`) — nothing currently stops
-      a POST with a multi-MB field value.
-- [ ] Add basic rate limiting per IP/time-window (e.g. `CacheService` counter
-      keyed by a coarse identifier, or Apps Script quota-aware throttling) —
-      right now there's no limit on submission volume beyond the honeypot,
-      so the endpoint can be spammed to flood the Sheet and the notification
-      inbox.
+Full audit (findings, fixes, and a 34-test regression suite) is in
+[`SECURITY_AUDIT.md`](./SECURITY_AUDIT.md) — 2026-10-10, including an
+independent follow-up pass (§G) that found two more real issues (below)
+and ends with an explicit **READY FOR PRODUCTION** call, contingent on
+redeploying `Code.gs` (it doesn't auto-deploy from git) and two manual
+checks outside version control (§H).
+
+- [x] Validate `vertical` server-side against the fixed option list —
+      **fixed** (SEC-004 in the audit): added `ALLOWED_VERTICALS`, rejects
+      any non-empty unrecognized value.
+- [x] Add a length cap to `name`/`email`/`company`/`message` — **fixed**
+      (SEC-005): `MAX_*_LENGTH` constants, rejected with a 400-style error.
+- [x] Add basic rate limiting — **fixed, best-effort** (SEC-003): a global
+      (not per-IP — Apps Script never exposes a caller IP to `doPost`, see
+      the audit's §F) throttle via `CacheService`, 20 submissions/minute
+      across all callers.
+- [x] Fixed two issues found during the audit that weren't on this list
+      yet: an unvalidated `submission_id` used as an unbounded cache key
+      (SEC-001 — could crash *and* defeat its own dedup purpose), and a
+      missing `LockService` lock around the dedup-check/append/dedup-write
+      sequence (SEC-002 — a race could duplicate rows). Also: raw exception
+      text was being returned to callers on error (SEC-006) — now a generic
+      message, with the real error logged server-side instead.
+- [x] Found and fixed in an independent follow-up review: a `CacheService`
+      failure occurring right after a successful row write could cause the
+      client to retry and duplicate the row (SEC-010 — same failure class
+      as SEC-001, different trigger).
+- [ ] **SEC-009, discussed and decided — not a bug, left as-is on purpose.**
+      A rate-limited request returns a disguised `{result:'ok'}` (no row
+      written, no email sent, caller told success anyway). This was briefly
+      changed to an honest error, then **reverted back to the original
+      behavior at the owner's request**: the disguise exists specifically
+      so a scripted abuser gets no signal it's being throttled, and that's
+      judged worth more than an occasional real visitor seeing a false
+      "received" during a throttled burst. The actual protection (Sheet/
+      inbox/quota) is unaffected either way. Revisit only if real visitors
+      start reporting messages that never arrived. Full discussion in
+      `SECURITY_AUDIT.md` §C.
+- [x] Also confirmed (as accepted, intentional behavior, not
+      bugs): dedup doesn't apply without a valid `submission_id`, the dedup
+      cache expires after 6h (the `CacheService` maximum), and the rate
+      limiter's fixed-window design allows a bounded ~2x burst at a window
+      boundary.
 - [ ] Consider adding a lightweight CAPTCHA/challenge (e.g. Cloudflare
       Turnstile or hCaptcha) if spam gets past the honeypot in practice —
       honeypots stop simple bots but not targeted abuse of a known public
-      endpoint.
+      endpoint. (SEC-008 in the audit — documented as a limitation, not
+      fixed; it's a new third-party dependency, a separate decision.)
 - [ ] Re-confirm `sheetSafe()` and `singleLine()` stay applied to *any* new
       field added later — both are field-by-field opt-in, not automatic, so
       a future field is unsafe by default until someone remembers to wire it
       in.
+- [ ] **Not yet live** — `Code.gs` in this repo has the fixes above, but
+      Apps Script doesn't deploy from git. Re-paste into the Apps Script
+      editor and **Deploy → Manage deployments → Edit → New version →
+      Deploy** (per `apps-script/README.md`) before any of this protects
+      the real site.
+- [ ] No monitoring on notification-email failures (SEC-007 in the audit) —
+      if the account's daily `MailApp` quota is ever exhausted, enquiry
+      emails silently stop with nothing visible except an Apps Script
+      execution-log entry nobody is watching.
 
 ## Contact form frontend (`contact.html`, `js/main.js`)
 
-- [ ] Add a `maxlength` attribute to `company`, `name`, `email`, and
-      `message` inputs to match whatever cap is added server-side (defense
-      in depth, also improves UX).
+- [x] Add a `maxlength` attribute to `company`, `name`, `email`, and
+      `message` inputs matching the new server-side caps — **done**
+      (2026-10-10, alongside the audit above).
 - [ ] Confirm the deployed Apps Script is still set to **Execute as: Me** /
       **Who has access: Anyone**, and periodically re-check this hasn't
       drifted — this is the entire trust boundary for the endpoint.

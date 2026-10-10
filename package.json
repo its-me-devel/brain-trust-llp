@@ -1,0 +1,8 @@
+{
+  "name": "brain-trust-site",
+  "private": true,
+  "description": "Static marketing site. No runtime dependencies - this file exists only to run the contact-form backend's tests via Node's built-in test runner.",
+  "scripts": {
+    "test": "node --test tests/*.test.js"
+  }
+}
