@@ -60,15 +60,19 @@ checks outside version control (§H).
       in.
 - [x] **Redeployed (2026-10-10, per owner)** — `Code.gs` with the fixes
       above has been pasted into the Apps Script editor and redeployed via
-      **Deploy → Manage deployments → Edit → New version → Deploy**. Noted
-      here as self-reported — not independently verified, since nothing in
-      this repo can query a live Apps Script deployment. Two things still
-      worth a one-time manual check (outside version control, see
-      `SECURITY_AUDIT.md` §H): the deployment's "Execute as / Who has
-      access" settings and the Sheet's sharing permissions, against what
-      `apps-script/README.md` documents. Also worth one ordinary (non-
-      adversarial) live submission of the real form to confirm the browser
-      ↔ Google network path behaves as the code assumes.
+      **Deploy → Manage deployments → Edit → New version → Deploy**.
+- [x] **Deployment settings + Sheet sharing checked, confirmed accurate
+      (2026-10-10, per owner)** — "Execute as: Me" / "Who has access:
+      Anyone" and the Sheet's sharing permissions match what
+      `apps-script/README.md` documents. Both of these items (like the
+      redeploy above) are self-reported — not independently verifiable
+      from this repo, since nothing here can query a live Apps Script
+      deployment or a Google account's sharing settings.
+- [ ] Still open: one ordinary (non-adversarial) live submission of the
+      real form, to confirm the browser ↔ Google network path behaves as
+      the code assumes (§G item 6 in `SECURITY_AUDIT.md` — the one check
+      in the whole audit that genuinely needs a real network request,
+      which this audit's tooling is deliberately prohibited from making).
 - [ ] No monitoring on notification-email failures (SEC-007 in the audit) —
       if the account's daily `MailApp` quota is ever exhausted, enquiry
       emails silently stop with nothing visible except an Apps Script

@@ -747,16 +747,20 @@ a "minimal fix."
 
 **Update (2026-10-10): the site owner has redeployed `apps-script/Code.gs`
 to the live Apps Script project** (Deploy → Manage deployments → New
-version → Deploy). This is recorded as self-reported — nothing in this
+version → Deploy), **and has checked the deployment's "Execute as / Who
+has access" settings and the Sheet's sharing permissions against what
+`apps-script/README.md` documents — confirmed accurate** (§G item 7; §F
+item 5, now closed). Both are recorded as self-reported — nothing in this
 repository or this audit's tooling can independently query a live Apps
-Script deployment to confirm it, the same way the rest of §G/§F's
-Google-account items can't be.
+Script deployment or a Google account's sharing settings to confirm them.
 
 **This verdict covers the *code in this repository*, verified by 34
-passing local tests against a faithful mock of the Apps Script runtime.
-It does not cover the two remaining items below that are Google-account
-configuration, not code, and cannot be verified from here (§G items 6 and
-7; §F item 5) — those remain the user's responsibility to spot-check.**
+passing local tests against a faithful mock of the Apps Script runtime,
+plus the two owner-confirmed account-level checks above. The one item
+still open is §G item 6 below (a live, real-world functional check) —
+genuinely the only thing in this whole audit that requires an actual
+network request, which this audit's tooling is deliberately prohibited
+from making.**
 
 **Why "ready," not "perfectly secure":** every CONFIRMED defect found
 across both passes (SEC-001 through SEC-006, plus SEC-010 from this
@@ -770,17 +774,19 @@ free, serverless, anonymous-access Apps Script backend, not overlooked
 bugs — each is explained, bounded, and
 documented rather than silently accepted.
 
-**Remaining items (not code defects — deployment/account steps, both outside what this repo or this audit's tooling can verify):**
+**Remaining items (not code defects — deployment/account steps, outside what this repo or this audit's tooling can verify):**
 1. ~~`Code.gs` must be redeployed~~ — **done**, per the owner (2026-10-10).
-2. **One manual, non-adversarial check of the redeployed live form**
+2. ~~Spot-check deployment "Execute as / Who has access" and the Sheet's
+   sharing settings against `apps-script/README.md`~~ — **done, confirmed
+   accurate**, per the owner (2026-10-10). (§G item 7; §F item 5 closed.
+   The OAuth scope grant specifically wasn't itemized by the owner's
+   check — if it's ever worth confirming independently, it's the
+   Gmail-send + Sheets-write pair the two authorization prompts in
+   `apps-script/README.md` walk through.)
+3. **One manual, non-adversarial check of the redeployed live form**
    (§G item 6) — submit it once for real, to confirm the browser ↔ Google
-   network path behaves as the source code assumes. Still recommended;
-   not something this audit's tooling can do from this environment.
-3. **One manual spot-check of Google-account settings** (§G item 7; §F
-   item 5) — deployment "Execute as / Who has access," the Sheet's sharing
-   settings, and the OAuth scope grant — against what
-   `apps-script/README.md` documents. These live outside version control
-   entirely.
+   network path behaves as the source code assumes. Still open; not
+   something this audit's tooling can do from this environment.
 
 **What "tested" means here, precisely:** 34/34 tests pass against a mock
 that implements `SpreadsheetApp`, `MailApp`, `CacheService` (with real
